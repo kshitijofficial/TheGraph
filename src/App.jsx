@@ -3,38 +3,49 @@ import { createClient } from 'urql';
 import './App.css';
 
 function App() {
-  const [tokens, setTokens] = useState([]);
-  const QueryURL = "https://gateway.thegraph.com/api/[api-key]/subgraphs/id/ELUcwgpm14LKPLrBRuVvPvNKHQ9HvwmtKgKSH6123cr7";
+  const [approvals, setapprovals] = useState([]);
+  const QueryURL = "https://api.studio.thegraph.com/query/51640/uniswapcon/version/latest";
   const client = createClient({
     url: QueryURL
   });
   const query =
     `
-  {
-    tokens(first: 5) {
-      id
-      name
+    {
+      approvals(first: 5) {
+        id
+        owner
+        spender
+        amount
+        transactionHash
+        blockTimestamp
+        blockNumber
+      }
     }
-  }
   `;
 
   useEffect(() => {
-    const getTokens = async () => {
+    const getapprovals = async () => {
       const { data } = await client.query(query).toPromise();
-      setTokens(data.tokens);
+      setapprovals(data.approvals);
     };
-    getTokens();
+    getapprovals();
   }, []);
 
   return (
     <>
       <div>
-        <h1>Tokens Information</h1>
-        {tokens !== null && tokens.length > 0 && tokens.map((token) => {
+        <h1>approvals Information</h1>
+        {approvals !== null && approvals.length > 0 && approvals.map((approval) => {
           return (
-            <div key={token.id}>
-              <div>{token.id}</div>
-              <div>{token.name}</div>
+            <div key={approval.id}>
+              <div><b>Id:</b>{approval.id}</div><br />
+              <div><b>Owner:</b>{approval.owner}</div><br />
+              <div><b>Spender:</b>{approval.spender}</div><br />
+              <div><b>Amount:</b>{approval.amount}</div><br />
+              <div><b>TransactionHash:</b>{approval.transactionHash}</div><br />
+              <div><b>BlockTimestamp:</b>{approval.blockTimestamp}</div><br />
+              <div><b>BlockNumber:</b>{approval.blockNumber}</div><br />
+              
             </div>
           );
         })}
